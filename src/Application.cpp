@@ -34,7 +34,12 @@ void Application::Run()
                         // Show game over menu
                         window.close();
                     }
-                    redTurn = !redTurn;
+                    else
+                    {
+                        // Display retry menu
+                        WinStatus status = board.WinCheck();
+                        redTurn = !redTurn;
+                    }
                 }
             }
         }

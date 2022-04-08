@@ -4,6 +4,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 
 #ifdef DEBUG
 #include <iostream>
@@ -41,19 +42,70 @@ WinStatus Board::WinCheck() const
             auto currentCellType = GetCellType(row, col);
             if (currentCellType != CellType::Empty)
             {
-                if (col < NUMBER_OF_COLUMNS - 4)
+                // Horizontal check.
+                if (col <= (NUMBER_OF_COLUMNS - 4))
                 {
                     auto sum = std::abs(currentCellType + GetCellType(row, col + 1) + GetCellType(row, col + 2) + GetCellType(row, col + 3));
                     if (sum == 4)
                     {
                         winStatus = currentCellType == CellType::Red ? WinStatus::RedWin : WinStatus::BlueWin;
-#ifdef DEBUG
-                        std::cout << (winStatus == WinStatus::RedWin ? "Red " : "Blue ")
-                                  << "Won" << std::endl;
-#endif
+
+                        m_winLine[0] = sf::Vertex({col * (float)CELL_SIDE + (CELL_SIDE / 2.f), row * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_winLine[1] = sf::Vertex({(col + 3) * (float)CELL_SIDE + (CELL_SIDE / 2.f), row * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_shouldDrawWinLine = true;
+                        break;
+                    }
+                }
+
+                // Vertical check.
+                if (row <= (NUMBER_OF_ROWS - 4))
+                {
+                    auto sum = std::abs(currentCellType + GetCellType(row + 1, col) + GetCellType(row + 2, col) + GetCellType(row + 3, col));
+                    if (sum == 4)
+                    {
+                        winStatus = currentCellType == CellType::Red ? WinStatus::RedWin : WinStatus::BlueWin;
+
+                        m_winLine[0] = sf::Vertex({col * (float)CELL_SIDE + (CELL_SIDE / 2.f), row * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_winLine[1] = sf::Vertex({col * (float)CELL_SIDE + (CELL_SIDE / 2.f), (row + 3) * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_shouldDrawWinLine = true;
+                        break;
+                    }
+                }
+
+                // Diagonal (-45) check.
+                if ((col <= (NUMBER_OF_COLUMNS - 4)) && (row <= (NUMBER_OF_ROWS - 4)))
+                {
+                    auto sum = std::abs(currentCellType + GetCellType(row + 1, col + 1) + GetCellType(row + 2, col + 2) + GetCellType(row + 3, col + 3));
+                    if (sum == 4)
+                    {
+                        winStatus = currentCellType == CellType::Red ? WinStatus::RedWin : WinStatus::BlueWin;
+
+                        m_winLine[0] = sf::Vertex({col * (float)CELL_SIDE + (CELL_SIDE / 2.f), row * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_winLine[1] = sf::Vertex({(col + 3) * (float)CELL_SIDE + (CELL_SIDE / 2.f), (row + 3) * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_shouldDrawWinLine = true;
+                        break;
+                    }
+                }
+
+                // Diagonal (45) check.
+                if (((col <= (NUMBER_OF_COLUMNS - 4)) && (row >= 3)))
+                {
+                    auto sum = std::abs(currentCellType + GetCellType(row - 1, col + 1) + GetCellType(row - 2, col + 2) + GetCellType(row - 3, col + 3));
+                    if (sum == 4)
+                    {
+                        winStatus = currentCellType == CellType::Red ? WinStatus::RedWin : WinStatus::BlueWin;
+
+                        m_winLine[0] = sf::Vertex({col * (float)CELL_SIDE + (CELL_SIDE / 2.f), row * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_winLine[1] = sf::Vertex({(col + 3) * (float)CELL_SIDE + (CELL_SIDE / 2.f), (row - 3) * (float)CELL_SIDE + (CELL_SIDE / 2.f)}, sf::Color::Yellow);
+                        m_shouldDrawWinLine = true;
+                        break;
                     }
                 }
             }
+        }
+        if (winStatus != WinStatus::NoWin)
+        {
+            break;
         }
     }
 
@@ -167,5 +219,10 @@ void Board::draw(sf::RenderTarget &target, sf::RenderStates states) const
             }
             }
         }
+    }
+
+    if (m_shouldDrawWinLine)
+    {
+        target.draw(m_winLine.data(), 2, sf::Lines);
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <array>
 
 enum class WinStatus
@@ -43,6 +44,8 @@ private:
     const int CELL_SIDE;
     static const int NUMBER_OF_ROWS = 6;
     static const int NUMBER_OF_COLUMNS = 7;
+    mutable std::array<sf::Vertex, 2> m_winLine;
+    mutable bool m_shouldDrawWinLine = false;
 
     std::array<Board::CellType, NUMBER_OF_ROWS * NUMBER_OF_COLUMNS> m_state;
 };
