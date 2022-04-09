@@ -2,6 +2,10 @@
 
 A cross-platform clone of [Connect4](https://en.wikipedia.org/wiki/Connect_Four) game written in C++ using [SFML](https://www.sfml-dev.org/)
 
+## Demo
+
+![Demo](branding/Demo.gif)
+
 ## Build Instructions
 
 - Requirements
