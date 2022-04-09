@@ -181,7 +181,7 @@ void Board::draw(sf::RenderTarget &target, sf::RenderStates states) const
         {
             sf::RectangleShape rect({(float)CELL_SIDE, (float)CELL_SIDE});
             rect.setPosition({(float)col * CELL_SIDE, (float)row * CELL_SIDE});
-            rect.setFillColor(sf::Color::Black);
+            rect.setFillColor(sf::Color(155, 201, 149, 255));
             rect.setOutlineThickness(2);
             rect.setOutlineColor(sf::Color::White);
 
